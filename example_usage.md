@@ -60,7 +60,7 @@ where $`w_0`$ is the kernel width at $`r_0=1''`$. Schematically, this is the dif
   <img src="_static/expanding_kernel.png" width="275" height="291">
 </p>
 
-How do we code up a convolution with a kernel whose width varies over the image? I could not find a way. Instead, we solve the inverse problem: we first stretch the image with the *inverse scaling* as we want the kernel to have, then perform the convolution on that stretched map with a *spatially constant kernel*, and then undo the stretch to restore the image to its original grid. Credit for the idea goes to [tom10 on stackoverflow](https://stackoverflow.com/questions/18624005/how-do-i-perform-a-convolution-in-python-with-a-variable-width-gaussian). **Nota bene: Interpolation is thus involved - not just once, but twice.**
+*How do we code up a convolution with a kernel whose width varies over the image?* I could not find a way. Instead, we solve the inverse problem: we first stretch the image with the *inverse scaling* as we want the kernel to have, then perform the convolution on that stretched map with a *spatially constant kernel*, and then undo the stretch to restore the image to its original grid. Credit for the approach goes to [tom10 on stackoverflow](https://stackoverflow.com/questions/18624005/how-do-i-perform-a-convolution-in-python-with-a-variable-width-gaussian). **Nota bene: Interpolation is thus involved - not just once, but twice.**
 
 
 # Example Usage
@@ -68,9 +68,9 @@ How do we code up a convolution with a kernel whose width varies over the image?
 The basic call is:
 
 ```python
-# High-pass filtering with a radially expanding Gaussian kernel.
+# High-pass filtering with a radially expanding Gaussian kernel
 from expanding_kernel import get_residual
-residual = get_residual(data=image, xaxis=xaxis, yaxis=xaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
+residual = get_residual(data=image, xaxis=xaxis, yaxis=yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
 ```
 
 The ``get_residual`` function convolves the input image ``data`` with a Gaussian kernel whose standard deviation is parameterized by ``gamma`` and ``w0``, and returns the residual after subtracting this blurred map from the original (if ``return_background`` is ``False``, else it returns the blurred map). The input `xaxis` and `yaxis` specify the image's original grid, and are assumed to be centered on the origin. The interpolation onto and off of the stretched image grid (see above) is done with [scipy.interpolate.interp2d](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp2d.html), and ``interp_kind`` specifies kind of spline.
@@ -98,10 +98,10 @@ gamma = 0.0  # Power of r with which Gaussian kernel width scales; gamma=0 is a 
 residual = kit.get_residual(data=m0.data, xaxis=m0.xaxis, yaxis=m0.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
 
 fig, ax = plt.subplots()
-norm_r = mpl.colors.Normalize(vmin=-0.2*np.nanmax(residual), vmax=0.2*np.nanmax(residual))
-ax.pcolormesh(m0.xaxis, m0.yaxis, residual, cmap=cmap_r, norm=norm_r)
+norm = mpl.colors.Normalize(vmin=-0.2*np.nanmax(residual), vmax=0.2*np.nanmax(residual))
+ax.pcolormesh(m0.xaxis, m0.yaxis, residual, cmap=cmap, norm=norm)
 
-cb = mpl.colorbar.ColorbarBase(ax=cax, cmap=cmap_r, norm=norm_r)
+cb = mpl.colorbar.ColorbarBase(ax=cax, cmap=cmap, norm=norm)
 cb.set_label(r'Filtered Moment 0 (mJy/beam km/s)')
 plt.show()
 ```
@@ -120,10 +120,10 @@ residual = kit.get_residual(data=np.log10(m0.data+10), \ # Pad with 10 to avoid 
             xaxis=m0.xaxis, yaxis=m0.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
 
 fig, ax = plt.subplots()
-norm_r = mpl.colors.Normalize(vmin=-0.3*np.nanmax(residual), vmax=0.3*np.nanmax(residual))
-ax.pcolormesh(m0.xaxis, m0.yaxis, residual, cmap=cmap_r, norm=norm_r)
+norm = mpl.colors.Normalize(vmin=-0.3*np.nanmax(residual), vmax=0.3*np.nanmax(residual))
+ax.pcolormesh(m0.xaxis, m0.yaxis, residual, cmap=cmap, norm=norm)
 
-cb = mpl.colorbar.ColorbarBase(ax=cax, cmap=cmap_r, norm=norm_r)
+cb = mpl.colorbar.ColorbarBase(ax=cax, cmap=cmap, norm=norm)
 cb.set_label(r'Filtered Moment 0 ($\log_{10}$ mJy/beam km/s)')
 plt.show()
 ```
@@ -134,9 +134,7 @@ plt.show()
 
 The dynamical range is more uniform, but the outer disk is still noisy, calling for a larger kernel. Here's a movie showing what happens as we increase the kernel size:
 
-<video width="536" controls>
-    <source src="[_static/ABAur_moment0_constantkernel_movie.mp4](https://github.com/jjspeedie/expanding_kernel/assets/38731892/f928d9c2-2125-4b94-9a95-b2eddfbdff18)" type="video/mp4">
-</video>
+https://github.com/jjspeedie/expanding_kernel/assets/38731892/240e1dbc-754a-4411-8979-685a2b920b4e
 
 When the kernel finally gets large enough to do a nice job on the outer disk, the inner ring is smeared and oversaturated.
 
@@ -152,10 +150,10 @@ gamma = 0.25  # No longer a constant kernel
 residual = kit.get_residual(data=np.log10(m0.data+10), xaxis=m0.xaxis, yaxis=m0.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
 
 fig, ax = plt.subplots()
-norm_r = mpl.colors.Normalize(vmin=-0.38*np.nanmax(residual), vmax=0.38*np.nanmax(residual))
-ax.pcolormesh(m0.xaxis, m0.yaxis, residual, cmap=cmap_r, norm=norm_r)
+norm = mpl.colors.Normalize(vmin=-0.38*np.nanmax(residual), vmax=0.38*np.nanmax(residual))
+ax.pcolormesh(m0.xaxis, m0.yaxis, residual, cmap=cmap, norm=norm)
 
-cb = mpl.colorbar.ColorbarBase(ax=cax, cmap=cmap_r, norm=norm_r)
+cb = mpl.colorbar.ColorbarBase(ax=cax, cmap=cmap, norm=norm)
 cb.set_label(r'Filtered Moment 0 ($\log_{10}$ mJy/beam km/s)')
 plt.show()
 ```
@@ -178,11 +176,9 @@ This is the version presented in [Speedie et al. (submitted)](https). The kernel
 
 Here's a movie showing high-pass filter residuals for a range of expanding kernel ``gamma`` choices:
 
-<video width="536" controls>
-    <source src="_static/ABAur_moment0_expandingkernel_movie.mp4" type="video/mp4">
-</video>
+https://github.com/jjspeedie/expanding_kernel/assets/38731892/fca6a147-9eb6-4b7a-9a7a-15f6d4059836
 
-As ``gamma`` gets "large" (hard to say exactly where this is, but perhaps ``gamma``~0.4), the stretch to the original image becomes severe and artifacts of the interpolation can be seen at large radii.
+As ``gamma`` gets "large", the stretch to the original image becomes severe and artifacts of the interpolation can be seen at large radii. Here we see this at $`r/r_0 \sim 5`$ starting around ``gamma``~0.4.
 
 
 ### 2. Sky frame vs. disk frame
@@ -191,62 +187,3 @@ The expanding kernel operates in the sky frame, not the disk frame. You may wish
 
 
 
-
-
-
-
-
-
-
-<!-- <p align='center'>
-  <img src="_static/constant_kernel.png" width="275" height="291">
-  <img src="_static/expanding_kernel.png" width="275" height="291">
-</p> -->
-
-
-<!-- Image plane
-
-Unsharp masking. Malin 1977
-https://ui.adsabs.harvard.edu/abs/1977AASPB..16...10M/abstract -->
-
-<!-- Boccaletti et al. 2020
-https://ui.adsabs.harvard.edu/abs/2020A&A...637L...5B -->
-
-<!-- Perez et al. 2016
-https://ui.adsabs.harvard.edu/abs/2016Sci...353.1519P -->
-
-<!-- Meru et al. 2017
-https://ui.adsabs.harvard.edu/abs/2017ApJ...839L..24M -->
-
-<!-- Zhang et al. 2023
-https://ui.adsabs.harvard.edu/abs/2023A&A...672A.145Z -->
-
-<!-- Garufi et al. 2024
-https://ui.adsabs.harvard.edu/abs/2024arXiv240302158G -->
-
-
-<!-- Fourier space
-
-Rosotti et al. 2020 (Eqn 1)
-https://ui.adsabs.harvard.edu/abs/2020MNRAS.491.1335R
-
-Norfolk et al. 2022
-https://ui.adsabs.harvard.edu/abs/2022ApJ...936L...4N -->
-
-<!-- ```python
-from expanding_kernel import get_residual
-from gofish import imagecube
-import matplotlib.pyplot as plt
-
-image = imagecube('path/to/moment0map.fits')
-
-w0    = 15   # Gaussian kernel width (in units of pixels) at r=1''
-gamma = 0.25 # Power of r with which Gaussian kernel width scales
-
-# High-pass filtering with a radially expanding Gaussian kernel
-residual = get_residual(data=np.log10(image.data), xaxis=image.xaxis, yaxis=image.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
-
-fig, ax = plt.subplots()
-ax.pcolormesh(image.xaxis, image.yaxis, residual, cmap=cmap, norm=norm, shading='gouraud', rasterized=True)
-plt.show()
-``` -->
