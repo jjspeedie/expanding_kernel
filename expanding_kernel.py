@@ -1,5 +1,4 @@
-def get_expanding_gaussian_kernel_residual(data, xaxis, yaxis, gamma, w0,
-    interp_kind, return_background):
+def get_residual(data, xaxis, yaxis, gamma, w0, interp_kind, return_background):
     """
     Convolve the input data with a Gaussian kernel whose standard deviation
     is a function of distance from the origin, and return the residual after
