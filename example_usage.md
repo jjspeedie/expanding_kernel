@@ -18,19 +18,19 @@ Let's consider the properties of such a spatially constant kernel. At one extrem
 Here's an example with the ALMA continuum image of the HD 163296 disk from [Andrews et al. (2018)](https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract). For reference, the synthesized beam is 0.05'' x 0.04''. First, a kernel width that is so small (0.006'') it highlights mostly noise:
 
 <p align='center'>
-  <img src="_static/HD163296_smallkernel.png" width="596" height="248">
+  <img src="_static/HD163296_smallkernel.png" width="1192">
 </p>
 
 Second, a kernel width that is very large (0.3''). Structure in the inner disk is smeared out or oversaturated, though structure in the outer disk comes through alright:
 
 <p align='center'>
-  <img src="_static/HD163296_bigkernel.png" width="596" height="248">
+  <img src="_static/HD163296_bigkernel.png" width="1192">
 </p>
 
 Finally, a happy-medium-sized kernel (0.04'', similar to the beam):
 
 <p align='center'>
-  <img src="_static/HD163296_mediumkernel.png" width="596" height="248">
+  <img src="_static/HD163296_mediumkernel.png" width="1192">
 </p>
 
 The happy-medium case nicely highlights structure in the inner disk, but things get a little bit closer to the noise in the outer disk. This set of examples demonstrates two things:
