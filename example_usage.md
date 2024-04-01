@@ -41,7 +41,7 @@ The happy-medium case nicely highlights structure in the inner disk, but things 
 In images where the strength of emission falls rapidly with distance from the star, and where the spatial scale of structures increases with distance from the star, a spatially constant kernel struggles to do all of the following simultaneously:
 
 1. Highlight small-scale structure in the inner disk *and* large-scale structure in the outer disk;
-2. Avoid oversaturation in the inner disk *but also* capture faint emission in the inner disk.
+2. Avoid oversaturation in the inner disk *but also* capture faint emission in the outer disk.
 
 The expanding kernel approach goes some way toward a solution to these limitations of a constant kernel.
 
@@ -135,7 +135,7 @@ plt.show()
 The dynamical range is more uniform, but the outer disk is still noisy, calling for a larger kernel. Here's a movie showing what happens as we increase the kernel size:
 
 <video width="536" controls>
-    <source src="_static/ABAur_moment0_constantkernel_movie.mp4" type="video/mp4">
+    <source src="[_static/ABAur_moment0_constantkernel_movie.mp4](https://github.com/jjspeedie/expanding_kernel/assets/38731892/f928d9c2-2125-4b94-9a95-b2eddfbdff18)" type="video/mp4">
 </video>
 
 When the kernel finally gets large enough to do a nice job on the outer disk, the inner ring is smeared and oversaturated.
