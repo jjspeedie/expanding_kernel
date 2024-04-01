@@ -6,16 +6,16 @@ The equivalent result can also be achieved in Fourier space, in which case the F
 High-pass filtering with a spatially constant Gaussian kernel is easy with [scipy](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.gaussian_filter.html) for example:
 
 ```python
-# High-pass filtering with a spatially constant Gaussian kernel.
+# High-pass filtering with a spatially constant Gaussian kernel
 from scipy.ndimage import gaussian_filter
 residuals = image - gaussian_filter(image, sigma=5)
 ```
 
 where ``sigma`` is the standard deviation of the 2D Gaussian kernel (in both dimensions), in units of image pixels.
 
-Let's consider the properties of such a spatially constant kernel. At one extreme, if the kernel width is small, the "background" (blurred) image is basically still the original. The resulting high-pass filter residuals will only the finest spatial scale, low-level structure (read: noise). At the other extreme, if the kernel width is very big, all structure is smeared away in saturation. In between, a kernel of a given width highlights structure on spatial scales similar to its width.
+Let's consider the properties of such a spatially constant kernel. At one extreme, if the kernel width is small, the "background" (blurred) image is basically still the original. The resulting high-pass filter residuals will only highlight the finest spatial scale and low-level structure (read: noise). At the other extreme, if the kernel width is very big, all structure is smeared away in saturation. In between, a kernel of a given width highlights structure on spatial scales similar to its width.
 
-Here's an example with the ALMA continuum image of the HD 163296 disk from [Andrews et al. 2018](https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract). For reference, the synthesized beam is 0.05'' x 0.04''. First, a kernel width that is so small (0.006'') it highlights mostly noise:
+Here's an example with the ALMA continuum image of the HD 163296 disk from [Andrews et al. (2018)](https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract). For reference, the synthesized beam is 0.05'' x 0.04''. First, a kernel width that is so small (0.006'') it highlights mostly noise:
 
 <p align='center'>
   <img src="_static/HD163296_smallkernel.png" width="596" height="248">
@@ -53,7 +53,7 @@ The idea is to perform the convolution with a radially expanding 2D Gaussian ker
 w(r) = w_0 \cdot (r/r_0)^{\gamma}
 ```
 
-where $`w_0`$ is the kernel width at $`r_0=1''`$ (this is implicit in the function). Schematically, this is the difference:
+where $`w_0`$ is the kernel width at $`r_0=1''`$. Schematically, this is the difference:
 
 <p align='center'>
   <img src="_static/constant_kernel.png" width="275" height="291">
@@ -75,7 +75,7 @@ residual = get_residual(data=image, xaxis=xaxis, yaxis=xaxis, gamma=gamma, w0=w0
 
 The ``get_residual`` function convolves the input image ``data`` with a Gaussian kernel whose standard deviation is parameterized by ``gamma`` and ``w0``, and returns the residual after subtracting this blurred map from the original (if ``return_background`` is ``False``, else it returns the blurred map). The input `xaxis` and `yaxis` specify the image's original grid, and are assumed to be centered on the origin. The interpolation onto and off of the stretched image grid (see above) is done with [scipy.interpolate.interp2d](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp2d.html), and ``interp_kind`` specifies kind of spline.
 
-Here's an example using ALMA observations of <sup>13</sup>CO emission toward AB Aurigae presented in [Speedie et al. (submitted)](https). We'll use the moment 0 map, which you can download [here](https). It looks like this:
+Here's an example using ALMA observations of <sup>13</sup>CO emission toward AB Aurigae presented in [Speedie et al. (submitted)](https). We'll use the moment 0 map, which you can download [here](https). With a linear colorbar, it looks like this:
 
 <p align='center'>
   <img src="_static/ABAur_moment0.png" width="429.2" height="488.6">
@@ -90,16 +90,16 @@ import matplotlib.pyplot as plt
 
 # Load the image using the infrastructure of gofish
 from gofish import imagecube # https://github.com/richteague/gofish/tree/master
-image = imagecube('path/to/moment0map.fits') # Has xaxis and yxaxis attributes defined the same way expanding_kernel.get_residual assumes
+image = imagecube('path/to/moment0map.fits') # Has xaxis and yxaxis attributes defined the same way that expanding_kernel.get_residual assumes
 
 w0    = 15   # Gaussian kernel width (in units of pixels) at r=1''
-gamma = 0.0  # Power of r with which Gaussian kernel width scales; gamma=0. is a constant kernel
+gamma = 0.0  # Power of r with which Gaussian kernel width scales; gamma=0 is a constant kernel
 
-residual = kit.get_residual(data=m0.data, xaxis=m0.xaxis, yaxis=m0.yaxis, rscale=gamma, sigma_pix=w0, interp_kind='cubic', return_background=False)
+residual = kit.get_residual(data=m0.data, xaxis=m0.xaxis, yaxis=m0.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
 
 fig, ax = plt.subplots()
 norm_r = mpl.colors.Normalize(vmin=-0.2*np.nanmax(residual), vmax=0.2*np.nanmax(residual))
-ax.pcolormesh(m0.xaxis-x0, m0.yaxis-y0, residual, cmap=cmap_r, norm=norm_r)
+ax.pcolormesh(m0.xaxis, m0.yaxis, residual, cmap=cmap_r, norm=norm_r)
 
 cb = mpl.colorbar.ColorbarBase(ax=cax, cmap=cmap_r, norm=norm_r)
 cb.set_label(r'Filtered Moment 0 (mJy/beam km/s)')
@@ -117,11 +117,11 @@ w0    = 15   # Gaussian kernel width (in units of pixels) at r=1''
 gamma = 0.0  # Still a constant kernel
 
 residual = kit.get_residual(data=np.log10(m0.data+10), \ # Pad with 10 to avoid possible log10(0) in background sky pixels
-            xaxis=m0.xaxis, yaxis=m0.yaxis, rscale=gamma, sigma_pix=w0, interp_kind='cubic', return_background=False)
+            xaxis=m0.xaxis, yaxis=m0.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
 
 fig, ax = plt.subplots()
 norm_r = mpl.colors.Normalize(vmin=-0.3*np.nanmax(residual), vmax=0.3*np.nanmax(residual))
-ax.pcolormesh(m0.xaxis-x0, m0.yaxis-y0, residual, cmap=cmap_r, norm=norm_r)
+ax.pcolormesh(m0.xaxis, m0.yaxis, residual, cmap=cmap_r, norm=norm_r)
 
 cb = mpl.colorbar.ColorbarBase(ax=cax, cmap=cmap_r, norm=norm_r)
 cb.set_label(r'Filtered Moment 0 ($\log_{10}$ mJy/beam km/s)')
@@ -143,17 +143,17 @@ When the kernel finally gets large enough to do a nice job on the outer disk, th
 
 ## Expanding kernel
 
-Make the kernel expand like $`r^{1.25}''`$ with ``gamma=0.25``:
+Make the kernel expand like $`r^{1.25}`$ with ``gamma=0.25``:
 
 ```python
 w0    = 15   # Gaussian kernel width (in units of pixels) at r=1''
-gamma = 0.25  # Still a constant kernel
+gamma = 0.25  # No longer a constant kernel
 
-residual = kit.get_residual(data=np.log10(m0.data+10), xaxis=m0.xaxis, yaxis=m0.yaxis, rscale=gamma, sigma_pix=w0, interp_kind='cubic', return_background=False)
+residual = kit.get_residual(data=np.log10(m0.data+10), xaxis=m0.xaxis, yaxis=m0.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
 
 fig, ax = plt.subplots()
 norm_r = mpl.colors.Normalize(vmin=-0.38*np.nanmax(residual), vmax=0.38*np.nanmax(residual))
-ax.pcolormesh(m0.xaxis-x0, m0.yaxis-y0, residual, cmap=cmap_r, norm=norm_r)
+ax.pcolormesh(m0.xaxis, m0.yaxis, residual, cmap=cmap_r, norm=norm_r)
 
 cb = mpl.colorbar.ColorbarBase(ax=cax, cmap=cmap_r, norm=norm_r)
 cb.set_label(r'Filtered Moment 0 ($\log_{10}$ mJy/beam km/s)')
