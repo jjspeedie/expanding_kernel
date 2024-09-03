@@ -75,7 +75,7 @@ residual = get_residual(data=image, xaxis=xaxis, yaxis=yaxis, gamma=gamma, w0=w0
 
 The ``get_residual`` function convolves the input image ``data`` with a Gaussian kernel whose standard deviation is parameterized by ``gamma`` and ``w0``, and returns the residual after subtracting this blurred map from the original (if ``return_background`` is ``False``, else it returns the blurred map). The input `xaxis` and `yaxis` specify the image's original grid, and are assumed to be centered on the origin. The interpolation onto and off of the stretched image grid (see above) is done with [scipy.interpolate.interp2d](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp2d.html), and ``interp_kind`` specifies kind of spline.
 
-Here's an example using ALMA observations of <sup>13</sup>CO emission toward AB Aurigae presented in [Speedie et al. (submitted)](https). We'll use the moment 0 map, which you can download [here](https). With a linear colorbar, it looks like this:
+Here's an example using ALMA observations of <sup>13</sup>CO emission toward AB Aurigae presented in [Speedie et al. (2024)](https://www.nature.com/articles/s41586-024-07877-0). We'll use the moment 0 map, which you can download [here](https://www.canfar.net/storage/vault/list/AstroDataCitationDOI/CISTI.CANFAR/24.0087/data/2021.1.00690.S/images_lines/13CO/v11_robust0.5/moment_maps). With a linear colorbar, it looks like this:
 
 <p align='center'>
   <img src="_static/ABAur_moment0.png" width="429.2" height="488.6">
