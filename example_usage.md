@@ -95,7 +95,7 @@ image = imagecube('path/to/moment0map.fits') # Has xaxis and yxaxis attributes d
 w0    = 15   # Gaussian kernel width (in units of pixels) at r=1''
 gamma = 0.0  # Power of r with which Gaussian kernel width scales; gamma=0 is a constant kernel
 
-residual = kit.get_residual(data=m0.data, xaxis=m0.xaxis, yaxis=m0.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
+residual = get_residual(data=m0.data, xaxis=m0.xaxis, yaxis=m0.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
 
 fig, ax = plt.subplots()
 norm = mpl.colors.Normalize(vmin=-0.2*np.nanmax(residual), vmax=0.2*np.nanmax(residual))
@@ -116,7 +116,7 @@ There's definitely structure to be seen there, but at a disparate dynamical rang
 w0    = 15   # Gaussian kernel width (in units of pixels) at r=1''
 gamma = 0.0  # Still a constant kernel
 
-residual = kit.get_residual(data=np.log10(m0.data+10), \ # Pad with 10 to avoid possible log10(0) in background sky pixels
+residual = get_residual(data=np.log10(m0.data+10), \ # Pad with 10 to avoid possible log10(0) in background sky pixels
             xaxis=m0.xaxis, yaxis=m0.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
 
 fig, ax = plt.subplots()
@@ -147,7 +147,7 @@ Make the kernel expand like $`r^{1.25}`$ with ``gamma=0.25``:
 w0    = 15   # Gaussian kernel width (in units of pixels) at r=1''
 gamma = 0.25  # No longer a constant kernel
 
-residual = kit.get_residual(data=np.log10(m0.data+10), xaxis=m0.xaxis, yaxis=m0.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
+residual = get_residual(data=np.log10(m0.data+10), xaxis=m0.xaxis, yaxis=m0.yaxis, gamma=gamma, w0=w0, interp_kind='cubic', return_background=False)
 
 fig, ax = plt.subplots()
 norm = mpl.colors.Normalize(vmin=-0.38*np.nanmax(residual), vmax=0.38*np.nanmax(residual))
