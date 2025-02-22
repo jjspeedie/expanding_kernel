@@ -162,7 +162,7 @@ plt.show()
   <img src="_static/ABAur_moment0_expandingkernel.png" width="429.2" height="488.6">
 </p>
 
-This is the version presented in [Speedie et al. (submitted)](https). The kernel is kept small around the ring (~1''), but larger outside. Here's a gif directly comparing the expanding kernel with ``gamma=0.25`` to the constant kernel of the same width at $`r=1''`$:
+This is the version presented in [Speedie et al. (2024)](https://www.nature.com/articles/s41586-024-07877-0). The kernel is kept small around the ring (~1''), but larger outside. Here's a gif directly comparing the expanding kernel with ``gamma=0.25`` to the constant kernel of the same width at $`r=1''`$:
 
 <p align='center'>
   <img src="_static/ABAur_moment0_kernelcomparison.gif" width="429.2" height="488.6">
